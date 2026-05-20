@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tabelanutricional.nutricional.dto.FruityviceResponse;
+import org.springframework.web.client.RestClient;
+
 @Service
 public class AlimentoService {
 
@@ -82,4 +85,46 @@ public class AlimentoService {
     private boolean estaVazio(String valor) {
         return valor == null || valor.isBlank();
     }
+
+
+//API Fruityvice - Importar alimento por nome da fruta
+
+    public Alimento importarDaFruityvice(String nomeFruta) {
+
+    try {
+
+        RestClient restClient = RestClient.create();
+
+
+        //essa parte que eu n entendi muito bem, o que é esse .retrieve() e .body() e tal, mas achei um exemplo na internet e tentei adaptar aqui, nao sei se ta certo
+        FruityviceResponse resposta = restClient.get()
+                .uri("https://www.fruityvice.com/api/fruit/" + nomeFruta)
+                .retrieve()
+                .body(FruityviceResponse.class);
+
+        if (resposta == null || resposta.getNutritions() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Fruta nao encontrada."
+            );
+        }
+
+        Alimento alimento = new Alimento();
+
+        alimento.setNome(resposta.getName());
+        alimento.setCalorias(resposta.getNutritions().getCalories());
+        alimento.setProteinas(resposta.getNutritions().getProtein());
+        alimento.setCarboidratos(resposta.getNutritions().getCarbohydrates());
+        alimento.setGorduras(resposta.getNutritions().getFat());
+
+        return alimentoRepository.save(alimento);
+
+    } catch (Exception e) {
+
+        throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Erro ao consultar Fruityvice."
+        );
+    }
+}
 }
