@@ -35,8 +35,7 @@ public class RefeicaoController {
     }
 
     @PutMapping("/{id}")
-    public Refeicao atualizar(@PathVariable Long id,
-                              @RequestBody Refeicao refeicao) {
+    public Refeicao atualizar(@PathVariable Long id, @RequestBody Refeicao refeicao) {
         return refeicaoService.atualizar(id, refeicao);
     }
 

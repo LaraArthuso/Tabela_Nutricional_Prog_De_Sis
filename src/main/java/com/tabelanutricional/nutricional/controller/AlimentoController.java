@@ -45,11 +45,10 @@ public class AlimentoController {
         alimentoService.remover(id);
     }
 
-
-    //API Fruityvice - Importar alimento por nome da fruta
+    // API Fruityvice - Importar alimento por nome da fruta
     @PostMapping("/importar/{nomeFruta}")
     @ResponseStatus(HttpStatus.CREATED)
     public Alimento importarDaFruityvice(@PathVariable String nomeFruta) {
-    return alimentoService.importarDaFruityvice(nomeFruta);
-}
+        return alimentoService.importarDaFruityvice(nomeFruta);
+    }
 }
