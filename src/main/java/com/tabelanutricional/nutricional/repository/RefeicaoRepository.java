@@ -1,6 +1,6 @@
 package com.tabelanutricional.nutricional.repository;
 
-import com.tabelanutricional.nutricional.entity.Refeicao;
+import com.tabelanutricional.nutricional.model.Refeicao;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

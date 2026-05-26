@@ -1,6 +1,6 @@
 package com.tabelanutricional.nutricional.controller;
 
-import com.tabelanutricional.nutricional.entity.ComposicaoNutricional;
+import com.tabelanutricional.nutricional.model.ComposicaoNutricional;
 import com.tabelanutricional.nutricional.service.ComposicaoNutricionalService;
 
 import java.util.List;

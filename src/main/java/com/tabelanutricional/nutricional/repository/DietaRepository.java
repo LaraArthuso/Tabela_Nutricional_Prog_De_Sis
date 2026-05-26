@@ -1,6 +1,6 @@
 package com.tabelanutricional.nutricional.repository;
 
-import com.tabelanutricional.nutricional.entity.Dieta;
+import com.tabelanutricional.nutricional.model.Dieta;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

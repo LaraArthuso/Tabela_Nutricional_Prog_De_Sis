@@ -1,6 +1,6 @@
 package com.tabelanutricional.nutricional.service;
 
-import com.tabelanutricional.nutricional.entity.Dieta;
+import com.tabelanutricional.nutricional.model.Dieta;
 import com.tabelanutricional.nutricional.repository.DietaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

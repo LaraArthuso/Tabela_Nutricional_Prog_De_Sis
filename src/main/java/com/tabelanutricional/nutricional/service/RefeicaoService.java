@@ -1,7 +1,7 @@
 package com.tabelanutricional.nutricional.service;
 
-import com.tabelanutricional.nutricional.entity.Paciente;
-import com.tabelanutricional.nutricional.entity.Refeicao;
+import com.tabelanutricional.nutricional.model.Paciente;
+import com.tabelanutricional.nutricional.model.Refeicao;
 import com.tabelanutricional.nutricional.repository.PacienteRepository;
 import com.tabelanutricional.nutricional.repository.RefeicaoRepository;
 

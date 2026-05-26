@@ -1,6 +1,6 @@
 package com.tabelanutricional.nutricional.service;
 
-import com.tabelanutricional.nutricional.entity.Alimento;
+import com.tabelanutricional.nutricional.model.Alimento;
 import com.tabelanutricional.nutricional.repository.AlimentoRepository;
 
 import java.util.List;

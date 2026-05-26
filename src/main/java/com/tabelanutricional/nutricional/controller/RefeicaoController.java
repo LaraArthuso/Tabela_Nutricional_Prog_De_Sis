@@ -1,6 +1,6 @@
 package com.tabelanutricional.nutricional.controller;
 
-import com.tabelanutricional.nutricional.entity.Refeicao;
+import com.tabelanutricional.nutricional.model.Refeicao;
 import com.tabelanutricional.nutricional.service.RefeicaoService;
 
 import java.util.List;

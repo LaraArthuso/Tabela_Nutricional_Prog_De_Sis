@@ -1,4 +1,4 @@
-package com.tabelanutricional.nutricional.entity;
+package com.tabelanutricional.nutricional.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
