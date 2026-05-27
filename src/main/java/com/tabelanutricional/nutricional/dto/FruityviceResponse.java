@@ -1,5 +1,4 @@
-//Objeto de Transferência de Dados (DTO) para mapear a resposta da API Fruityvice 
-// nao tinha entendido o sentido de criar essa pasta nennum prof colocou ainda
+//dto para mapear a resposta daapi  
 
 
 //tentei colocar os atributos em pt mas deu erro ai tinha que colocar em ingles kkkk tive que mudar em alimento

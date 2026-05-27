@@ -2,35 +2,33 @@ package com.tabelanutricional.nutricional.dto;
 
 import java.util.List;
 
-/**
- * DTO que representa o relatório nutricional de um paciente.
- * Agrega dados locais do banco com dados em tempo real da API Fruityvice.
- */
+
+  //dto que representa o relatório nutricional de paciente
+  //juntas dados locais com dados da api
+ 
 public class RelatorioNutricionalDTO {
 
-    // --- Dados do paciente (banco local) ---
+    //paciente banco local 
     private Long pacienteId;
     private String nome;
     private Integer idade;
     private Double peso;
     private Double altura;
-    private Double imc; // calculado localmente: peso / (altura * altura)
+    private Double imc; // calculado local
 
-    // --- Dietas do paciente (banco local) ---
+    // dietas do paciente banco local 
     private List<String> dietas;
 
-    // --- Refeições com alimentos (local + tempo real) ---
+    // efeições com alimentos banco local e dados atualizados da api
     private List<RefeicaoDTO> refeicoes;
 
-    // --- Totais nutricionais somados de todas as refeições ---
+    //totais nutricionais somados de todas as refeições
     private Double totalCalorias;
     private Double totalProteinas;
     private Double totalCarboidratos;
     private Double totalGorduras;
 
-    // -------------------------------------------------------
-    // Classe interna: representa uma refeição no relatório
-    // -------------------------------------------------------
+    // classe interna uma refeição no relatório
     public static class RefeicaoDTO {
         private Long id;
         private String data;
@@ -50,17 +48,16 @@ public class RelatorioNutricionalDTO {
         public void setAlimentos(List<AlimentoDTO> alimentos) { this.alimentos = alimentos; }
     }
 
-    // -------------------------------------------------------
-    // Classe interna: representa um alimento no relatório,
+    // classe interna representa um alimento no relatório,
     // com indicação se os dados vieram do banco ou da API
-    // -------------------------------------------------------
+
     public static class AlimentoDTO {
         private String nome;
         private Double calorias;
         private Double proteinas;
         private Double carboidratos;
         private Double gorduras;
-        private String origem; // "banco local" ou "Fruityvice (tempo real)"
+        private String origem; //  banco local ou Fruityvice tempo real
 
         public String getNome() { return nome; }
         public void setNome(String nome) { this.nome = nome; }
@@ -81,9 +78,6 @@ public class RelatorioNutricionalDTO {
         public void setOrigem(String origem) { this.origem = origem; }
     }
 
-    // -------------------------------------------------------
-    // Getters e Setters do relatório principal
-    // -------------------------------------------------------
     public Long getPacienteId() { return pacienteId; }
     public void setPacienteId(Long pacienteId) { this.pacienteId = pacienteId; }
 

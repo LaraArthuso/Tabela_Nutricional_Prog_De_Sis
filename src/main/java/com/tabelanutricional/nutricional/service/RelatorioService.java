@@ -35,29 +35,26 @@ public class RelatorioService {
         this.refeicaoRepository = refeicaoRepository;
     }
 
-    /**
-     * Gera o relatório nutricional completo de um paciente,
-     * agregando dados locais do banco com dados em tempo real da API Fruityvice.
-     */
+    
     public RelatorioNutricionalDTO gerarRelatorio(Long pacienteId) {
 
-        // --- 1. Buscar o paciente no banco local ---
+        //buscar o paciente no banco local
         Paciente paciente = pacienteRepository.findById(pacienteId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Paciente nao encontrado."
                 ));
 
-        // --- 2. Buscar as dietas do paciente no banco local ---
+        //as dietas do paciente no banco local
         List<Dieta> dietas = dietaRepository.findByPacienteId(pacienteId);
-        List<String> descricoesDietas = dietas.stream()
+        List<String> descricoesDietas = dietas.stream() // stream serve para processar 
                 .map(Dieta::getDescricao)
                 .toList();
 
-        // --- 3. Buscar as refeições do paciente no banco local ---
+        // refeições do paciente no banco local 
         List<Refeicao> refeicoes = refeicaoRepository.findByPacienteId(pacienteId);
 
-        // --- 4. Montar as refeições do relatório, enriquecendo os alimentos ---
+        //as refeições do relatório e os totais nutricionais inicializados em 0
         double totalCalorias = 0.0;
         double totalProteinas = 0.0;
         double totalCarboidratos = 0.0;
@@ -71,18 +68,19 @@ public class RelatorioService {
 
             for (Alimento alimento : refeicao.getAlimentos()) {
 
-                // Tenta buscar dados atualizados da Fruityvice pelo nome do alimento
+                // aqui mistura o local e api
+                // busca dados atualizados da Fruityvice pelo nome do alimento 
                 AlimentoDTO alimentoDTO = buscarDadosAtualizados(alimento);
 
                 alimentosDTO.add(alimentoDTO);
 
-                // Acumula nos totais (usa 0.0 se o valor for nulo)
+                // acumula nos totais usa 0.0 se o valor for nulo
                 totalCalorias    += alimentoDTO.getCalorias()    != null ? alimentoDTO.getCalorias()    : 0.0;
                 totalProteinas   += alimentoDTO.getProteinas()   != null ? alimentoDTO.getProteinas()   : 0.0;
                 totalCarboidratos+= alimentoDTO.getCarboidratos()!= null ? alimentoDTO.getCarboidratos(): 0.0;
                 totalGorduras    += alimentoDTO.getGorduras()    != null ? alimentoDTO.getGorduras()    : 0.0;
             }
-
+            //aqui formata a refeição do relatório com os dados atualizados dos alimentos
             RefeicaoDTO refeicaoDTO = new RefeicaoDTO();
             refeicaoDTO.setId(refeicao.getId());
             refeicaoDTO.setData(refeicao.getData());
@@ -91,10 +89,10 @@ public class RelatorioService {
             refeicoesDTO.add(refeicaoDTO);
         }
 
-        // --- 5. Calcular o IMC localmente ---
+        // calcular o imc localmente usando os dados do paciente do banco 
         double imc = paciente.getPeso() / (paciente.getAltura() * paciente.getAltura());
 
-        // --- 6. Montar e retornar o relatório final ---
+        //monta e retornar o relatório final 
         RelatorioNutricionalDTO relatorio = new RelatorioNutricionalDTO();
         relatorio.setPacienteId(paciente.getId());
         relatorio.setNome(paciente.getNome());
@@ -112,11 +110,10 @@ public class RelatorioService {
         return relatorio;
     }
 
-    /**
-     * Tenta buscar dados atualizados da Fruityvice pelo nome do alimento.
-     * Se não encontrar (alimento não é uma fruta ou API indisponível),
-     * usa os dados salvos no banco local como fallback.
-     */
+    
+     //tenta buscar dados atualizados da Fruityvice pelo nome do alimento
+     //se não encontrar usa os dados salvos no banco local como fallback
+     
     private AlimentoDTO buscarDadosAtualizados(Alimento alimento) {
 
         AlimentoDTO dto = new AlimentoDTO();
@@ -141,10 +138,10 @@ public class RelatorioService {
             }
 
         } catch (Exception e) {
-            // Fruta não encontrada na API ou erro de rede: usa dados locais
+            //não encontrada na API ou erro de rede usa dados locais
         }
 
-        // Fallback: dados do banco local
+        // fallback: dados do banco local
         dto.setCalorias(alimento.getCalorias());
         dto.setProteinas(alimento.getProteinas());
         dto.setCarboidratos(alimento.getCarboidratos());
