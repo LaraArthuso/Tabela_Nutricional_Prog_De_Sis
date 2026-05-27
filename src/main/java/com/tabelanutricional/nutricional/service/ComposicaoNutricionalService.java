@@ -1,19 +1,34 @@
 package com.tabelanutricional.nutricional.service;
 
-import com.tabelanutricional.nutricional.model.ComposicaoNutricional;
-import com.tabelanutricional.nutricional.repository.ComposicaoNutricionalRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import com.tabelanutricional.nutricional.model.Alimento;
+import com.tabelanutricional.nutricional.model.ComposicaoNutricional;
+import com.tabelanutricional.nutricional.model.Refeicao;
+import com.tabelanutricional.nutricional.repository.AlimentoRepository;
+import com.tabelanutricional.nutricional.repository.ComposicaoNutricionalRepository;
+import com.tabelanutricional.nutricional.repository.RefeicaoRepository;
 
 @Service
 public class ComposicaoNutricionalService {
 
-    @Autowired
-    private ComposicaoNutricionalRepository composicaoNutricionalRepository;
+    private final ComposicaoNutricionalRepository composicaoNutricionalRepository;
+    private final RefeicaoRepository refeicaoRepository;
+    private final AlimentoRepository alimentoRepository;
+
+    public ComposicaoNutricionalService(
+            ComposicaoNutricionalRepository composicaoNutricionalRepository,
+            RefeicaoRepository refeicaoRepository,
+            AlimentoRepository alimentoRepository) {
+
+        this.composicaoNutricionalRepository = composicaoNutricionalRepository;
+        this.refeicaoRepository = refeicaoRepository;
+        this.alimentoRepository = alimentoRepository;
+    }
 
     public List<ComposicaoNutricional> listarTodos() {
         return composicaoNutricionalRepository.findAll();
@@ -24,20 +39,35 @@ public class ComposicaoNutricionalService {
     }
 
     public ComposicaoNutricional salvar(ComposicaoNutricional composicaoNutricional) {
+        validarComposicao(composicaoNutricional);
+
+        Refeicao refeicao = localizarRefeicao(composicaoNutricional.getRefeicao().getId());
+        Alimento alimento = localizarAlimento(composicaoNutricional.getAlimento().getId());
+
+        composicaoNutricional.setRefeicao(refeicao);
+        composicaoNutricional.setAlimento(alimento);
+
         return composicaoNutricionalRepository.save(composicaoNutricional);
     }
 
-    public ComposicaoNutricional atualizar(Long id, ComposicaoNutricional cnAtualizada) {
+    public ComposicaoNutricional atualizar(Long id, ComposicaoNutricional composicaoAtualizada) {
+        validarComposicao(composicaoAtualizada);
+
         ComposicaoNutricional atual = localizarPorId(id);
-        atual.setQuantidade(cnAtualizada.getQuantidade());
-        atual.setRefeicao(cnAtualizada.getRefeicao());
-        atual.setAlimento(cnAtualizada.getAlimento());
+
+        Refeicao refeicao = localizarRefeicao(composicaoAtualizada.getRefeicao().getId());
+        Alimento alimento = localizarAlimento(composicaoAtualizada.getAlimento().getId());
+
+        atual.setQuantidade(composicaoAtualizada.getQuantidade());
+        atual.setRefeicao(refeicao);
+        atual.setAlimento(alimento);
+
         return composicaoNutricionalRepository.save(atual);
     }
 
     public void remover(Long id) {
-        ComposicaoNutricional cn = localizarPorId(id);
-        composicaoNutricionalRepository.delete(cn);
+        ComposicaoNutricional composicaoNutricional = localizarPorId(id);
+        composicaoNutricionalRepository.delete(composicaoNutricional);
     }
 
     private ComposicaoNutricional localizarPorId(Long id) {
@@ -46,5 +76,42 @@ public class ComposicaoNutricionalService {
                         HttpStatus.NOT_FOUND,
                         "Composicao nutricional nao encontrada."
                 ));
+    }
+
+    private Refeicao localizarRefeicao(Long refeicaoId) {
+        return refeicaoRepository.findById(refeicaoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Refeicao nao encontrada."
+                ));
+    }
+
+    private Alimento localizarAlimento(Long alimentoId) {
+        return alimentoRepository.findById(alimentoId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Alimento nao encontrado."
+                ));
+    }
+
+    private void validarComposicao(ComposicaoNutricional composicaoNutricional) {
+        if (composicaoNutricional == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "O corpo da requisicao e obrigatorio."
+            );
+        }
+
+        if (composicaoNutricional.getQuantidade() == null
+                || composicaoNutricional.getRefeicao() == null
+                || composicaoNutricional.getRefeicao().getId() == null
+                || composicaoNutricional.getAlimento() == null
+                || composicaoNutricional.getAlimento().getId() == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Quantidade, refeicao e alimento sao obrigatorios."
+            );
+        }
     }
 }
